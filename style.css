@@ -2,7 +2,7 @@
     --primary-color: #E7E8D1;
     --red-color: #B85042;
     --green-color: #A7BEAE;
-    --line-color: #555555;
+    --line-color: #0a0a0a;
 }
 
 .button{
@@ -15,17 +15,14 @@
 
 .container{
     background-color: var(--primary-color);
-    height: 100vh;
-    width: 100vw;
+    background-size: 100% 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 body {
-    width: 100vw;
-    min-height: 100vh;
-    overflow: hidden;
     margin: 0;
 }
 
@@ -87,6 +84,22 @@ header {
     font-weight: 600;
 }
 
+#taskInput{
+    position: relative;
+    top: 0.5px;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    padding: 0;
+    background-color: var(--primary-color);
+}
+
+#taskInput:focus{
+    outline: none;
+    caret-color: var(--line-color);
+    ;
+}
+
 .checked{
     background-color:var(--green-color);
 }
@@ -98,7 +111,7 @@ header {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    background-color: rgba(55, 55, 55, 0.8);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .task__modify__button{
