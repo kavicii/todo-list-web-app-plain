@@ -1,22 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> TODO Webapp | VanillaJS </title>
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jim+Nightshade&display=swap" rel="stylesheet">
     <script src="script.js" defer></script>
 </head>
+
 <body>
-<div class="container">
-    <header>
-        <span class="title"></span>    
-    </header>
-    <section class="task__container">
-        <ul id="tasksList"></ul>
-        <button id="addTaskBtn"></button>
-    </section>
-</div>
+    <div class="container">
+        <header>
+            <span class="title">To-do List</span>
+        </header>
+        <section class="task__container">
+            <ul id="tasksList">
+                <li class="task__item">
+                    <div class="task__button button"></div>
+                    <span class="task__text">Testing1</span>
+                </li>
+                <li class="task__item">
+                    <div class="task__button button checked"></div>
+                    <span class="task__text">Testing2</span>
+                </li>
+                <li class="task__item selected">
+                    <div class="task__button button checked"></div>
+                    <span class="task__text">Testing3</span>
+                    <div class="task__mask">
+                        <div class="task__delete__button button">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+                                <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="task__modify__button button">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                <path fill="currentColor"
+                                    d="m12.9 6.855l4.242 4.242l-9.9 9.9H3v-4.243zm1.414-1.415l2.121-2.121a1 1 0 0 1 1.414 0l2.829 2.828a1 1 0 0 1 0 1.415l-2.122 2.121z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div id="addTaskBtn" class="button">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+                    <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+                </svg>
+            </div>
+        </section>
+    </div>
 </body>
+
 </html>

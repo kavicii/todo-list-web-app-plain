@@ -2,12 +2,126 @@
     --primary-color: #E7E8D1;
     --red-color: #B85042;
     --green-color: #A7BEAE;
+    --line-color: #555555;
 }
 
-header {
+.button{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    color: var(--line-color);
+    border: 2px solid var(--line-color);
+}
 
+.container{
+    background-color: var(--primary-color);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 body {
-    
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+    margin: 0;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    width: 100vw;
+    background-color: var(--red-color);
+    border-bottom: 2px solid black;
+}
+
+.title{
+    position: relative;
+    top: 10px;
+    color: var(--primary-color);
+    font-family: "Jim Nightshade", cursive;
+    font-size: 4em;
+}
+
+.task__container{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+}
+
+#tasksList{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin:0;
+    list-style-type: none;
+}
+
+.task__item{
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--line-color);
+    border-radius: 16px;
+    margin: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.task__button{
+    margin: 16px;
+}
+
+.task__text{
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.checked{
+    background-color:var(--green-color);
+}
+
+.task__mask{
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    background-color: rgba(55, 55, 55, 0.8);
+}
+
+.task__modify__button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--green-color);
+}
+
+.task__delete__button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--red-color);
+    transform: rotate(45deg);
+    margin: 0 24px 0 16px;
+
+}
+
+#addTaskBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color:var(--primary-color);
+    margin: 16px;
 }
