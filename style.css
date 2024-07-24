@@ -11,6 +11,7 @@
     border-radius: 50%;
     color: var(--line-color);
     border: 2px solid var(--line-color);
+    cursor: pointer;
 }
 
 .container{
