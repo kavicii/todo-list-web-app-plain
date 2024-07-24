@@ -131,6 +131,7 @@ const toggleCheckButton = (el) => {
     } else {
         el.classList.add('checked');
     }
+    updateLocalStorage();
 }
 
 //event listener of clicking outside from the element
