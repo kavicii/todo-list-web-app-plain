@@ -2,7 +2,6 @@ var root = document.querySelector(':root');
 var container = document.querySelector('.container');
 var taskList = document.getElementById('tasksList');
 var addTaskBtn = document.getElementById('addTaskBtn');
-var taskCheckBtns = document.querySelectorAll('.task--checked')
 
 addTaskBtn.addEventListener('click', () => addTask());
 
@@ -37,7 +36,10 @@ function addTask(text) {
         newTaskItem.addEventListener('click', () => toggleTask(newTaskMask));
         newDelBtn.addEventListener('click', () => deleteTask(newTaskItem));
         newModBtn.addEventListener('click', () => modifyTask(newTaskItem));
-
+        newTaskBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleCheckButton(newTaskBtn);
+        })
     }else{
         const newTaskInput = document.createElement('input');
         newTaskInput.setAttribute('id', 'taskInput');
@@ -49,6 +51,10 @@ function addTask(text) {
             .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)))
             .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskItem)))
             .then(() => newModBtn.addEventListener('click', () => modifyTask(newTaskItem)))
+            .then(() => newTaskBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleCheckButton(newTaskBtn);
+            }))
             .then(()=> newTaskText.style.display = '');
     }
 }
@@ -89,6 +95,15 @@ const toggleTask = (el) => {
         el.classList.remove("hidden");
     } else {
         el.classList.add("hidden");
+    }
+}
+
+//toggle task's check button
+const toggleCheckButton = (el) => {
+    if(el.classList.contains('checked')){
+        el.classList.remove('checked');
+    } else {
+        el.classList.add('checked');
     }
 }
 
