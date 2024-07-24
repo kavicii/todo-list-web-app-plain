@@ -34,7 +34,8 @@ function addTask() {
 
     newTaskInput.focus();
     onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText))
-        .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)));
+        .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)))
+        .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskMask)))
 }
 
 //confirm adding task
@@ -48,7 +49,10 @@ const confirmAddingTask = (input, text) => {
 }
 
 //delete task
-const deleteTask = (btns) => { }
+const deleteTask = (el) => {
+    let parent = el.parentElement;
+    parent.remove();
+}
 
 //modify task
 const modifyTask = (btns) => { }
@@ -57,10 +61,8 @@ const modifyTask = (btns) => { }
 const toggleTask = (el) => {
     if (el.classList.contains("hidden")) {
         el.classList.remove("hidden");
-        console.log(el)
     } else {
         el.classList.add("hidden");
-        console.log(el)
     }
 }
 
