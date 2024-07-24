@@ -6,15 +6,18 @@ var taskCheckBtns = document.querySelectorAll('.task--checked')
 
 addTaskBtn.addEventListener('click', () => addTask());
 
+addTask(" s")
+addTask(" s ")
+
+
+
+
 //add task
-function addTask() {
+function addTask(text) {
     const newTaskItem = document.createElement('li');
     newTaskItem.setAttribute('class', 'task__item');
     const newTaskBtn = document.createElement('div');
     newTaskBtn.setAttribute('class', 'task__button button');
-    const newTaskInput = document.createElement('input');
-    newTaskInput.setAttribute('id', 'taskInput');
-    newTaskInput.setAttribute('input', 'text');
     const newTaskText = document.createElement('span');
     newTaskText.setAttribute('class', 'task__text');
     const newTaskMask = document.createElement('div');
@@ -26,21 +29,33 @@ function addTask() {
 
     taskList.appendChild(newTaskItem);
     newTaskItem.appendChild(newTaskBtn);
-    newTaskItem.appendChild(newTaskInput);
     newTaskItem.appendChild(newTaskText);
     newTaskItem.appendChild(newTaskMask);
     newTaskMask.appendChild(newDelBtn);
     newTaskMask.appendChild(newModBtn);
+    
+    if (typeof text !== "undefined" && text.trim().length>0){
+        newTaskText.innerText = text;
+        newTaskItem.addEventListener('click', () => toggleTask(newTaskMask));
+        newDelBtn.addEventListener('click', () => deleteTask(newTaskItem));
+        newModBtn.addEventListener('click', () => modifyTask(newTaskItem));
 
-    newTaskInput.focus();
-    onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText))
-        .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)))
-        .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskMask)))
+    }else{
+        const newTaskInput = document.createElement('input');
+        newTaskInput.setAttribute('id', 'taskInput');
+        newTaskInput.setAttribute('input', 'text');   
+        newTaskItem.appendChild(newTaskInput);
+        newTaskInput.focus();
+        onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText))
+            .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)))
+            .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskItem)))
+            .then(() => newModBtn.addEventListener('click', () => modifyTask(newTaskItem)))
+    }
 }
 
 //confirm adding task
 const confirmAddingTask = (input, text) => {
-    if (input.value !== '') {
+    if (input.value !== '' && input.value.trim().length > 0 ) {
         text.innerText = input.value;
         input.remove();
     } else {
@@ -50,12 +65,23 @@ const confirmAddingTask = (input, text) => {
 
 //delete task
 const deleteTask = (el) => {
-    let parent = el.parentElement;
-    parent.remove();
+    el.remove();
 }
 
 //modify task
-const modifyTask = (btns) => { }
+const modifyTask = (el) => {
+    let taskText = el.querySelector('.task__text');
+    let taskMask = el.querySelector('.task__mask');
+    const newTaskInput = document.createElement('input');
+    newTaskInput.setAttribute('id', 'taskInput');
+    newTaskInput.setAttribute('input', 'text');
+    newTaskInput.value = taskText.innerText;
+    el.insertBefore(newTaskInput,taskMask);
+    taskText.style.display = 'none';
+    newTaskInput.focus();
+    onClickOutside(el, () => confirmAddingTask(newTaskInput, taskText))
+    .then(()=> taskText.style.display = 'inline');
+}
 
 //toggle task edit mode
 const toggleTask = (el) => {
