@@ -6,11 +6,9 @@ var taskCheckBtns = document.querySelectorAll('.task--checked')
 
 addTaskBtn.addEventListener('click', () => addTask());
 
-addTask(" s")
-addTask(" s ")
-
-
-
+addTask("Welcome to my to-do list.")
+addTask("Click task item to toggle edit mode for deleting or modifying task.")
+addTask("Click below \"+\" button for adding new task.")
 
 //add task
 function addTask(text) {
@@ -46,10 +44,12 @@ function addTask(text) {
         newTaskInput.setAttribute('input', 'text');   
         newTaskItem.appendChild(newTaskInput);
         newTaskInput.focus();
+        newTaskText.style.display = 'none';
         onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText))
             .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskMask)))
             .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskItem)))
             .then(() => newModBtn.addEventListener('click', () => modifyTask(newTaskItem)))
+            .then(()=> newTaskText.style.display = '');
     }
 }
 
@@ -80,7 +80,7 @@ const modifyTask = (el) => {
     taskText.style.display = 'none';
     newTaskInput.focus();
     onClickOutside(el, () => confirmAddingTask(newTaskInput, taskText))
-    .then(()=> taskText.style.display = 'inline');
+    .then(()=> taskText.style.display = '');
 }
 
 //toggle task edit mode
