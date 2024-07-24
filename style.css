@@ -115,20 +115,19 @@ header {
 }
 
 .task__modify__button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-image: url(svg/pencil.svg);
+    background-repeat: no-repeat;
+    background-position: center;
     background-color: var(--green-color);
 }
 
 .task__delete__button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-image: url(svg/cross.svg);
+    background-repeat: no-repeat;
+    background-position: center;
     background-color: var(--red-color);
     transform: rotate(45deg);
     margin: 0 24px 0 16px;
-
 }
 
 #addTaskBtn{
@@ -137,4 +136,8 @@ header {
     justify-content: center;
     background-color:var(--primary-color);
     margin: 16px;
+}
+
+.hidden{
+    visibility: hidden;
 }
