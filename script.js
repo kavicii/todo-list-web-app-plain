@@ -14,7 +14,7 @@ if (localStorage.length !== 0) {
     addTask("Click task item to toggle edit mode for deleting or modifying task.");
     addTask("Click below \"+\" button for adding new task.", 'true');
     addTask("For your security, we recommend not storing any sensitive personal information like passwords, credit card details, or social security numbers in this web app.", 'false');
-}
+};
 //add task
 function addTask(text, checked) {
     const newTaskItem = document.createElement('li');
@@ -58,22 +58,33 @@ function addTask(text, checked) {
         newTaskInput.setAttribute('id', 'taskInput');
         newTaskInput.setAttribute('input', 'text');
         newTaskItem.appendChild(newTaskInput);
+        const newConfirmBtn = document.createElement('div');
+        newConfirmBtn.setAttribute('class', 'task__confirm__button');
+        newConfirmBtn.innerText = 'Confirm';
+        newTaskItem.appendChild(newConfirmBtn);
         newTaskInput.focus();
         newTaskText.style.display = 'none';
-        onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText))
-            .then(() => newTaskItem.addEventListener('click', () => toggleTask(newTaskItem)))
-            .then(() => newDelBtn.addEventListener('click', () => deleteTask(newTaskItem)))
-            .then(() => newModBtn.addEventListener('click', (event) => {
-                event.stopPropagation();
-                modifyTask(newTaskItem);
-            }))
-            .then(() => newTaskBtn.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleCheckButton(newTaskBtn);
-            }))
-            .then(() => newTaskText.style.display = '');
+        Promise.race([
+            onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText)),
+            onClickConfirmButton(newConfirmBtn, () => confirmAddingTask(newTaskInput, newTaskText)),
+            onPressEnterKey(newTaskInput, () => confirmAddingTask(newTaskInput, newTaskText))
+        ])
+            .then(() => {
+                newTaskItem.addEventListener('click', () => toggleTask(newTaskItem));
+                newDelBtn.addEventListener('click', () => deleteTask(newTaskItem));
+                newModBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    modifyTask(newTaskItem);
+                });
+                newTaskBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    toggleCheckButton(newTaskBtn);
+                });
+                newTaskText.style.display = '';
+                newConfirmBtn.remove();
+            });
     }
-}
+};
 
 //confirm adding task
 const confirmAddingTask = (input, text) => {
@@ -84,13 +95,13 @@ const confirmAddingTask = (input, text) => {
         input.parentElement.remove();
     }
     updateLocalStorage();
-}
+};
 
 //delete task
 const deleteTask = (el) => {
     el.remove();
     updateLocalStorage();
-}
+};
 
 //modify task
 const modifyTask = (el) => {
@@ -101,21 +112,32 @@ const modifyTask = (el) => {
     newTaskInput.setAttribute('input', 'text');
     newTaskInput.value = taskText.innerText;
     el.insertBefore(newTaskInput, taskMask);
-    if (!taskMask.classList.contains("hidden")){
+    const newConfirmBtn = document.createElement('div');
+    newConfirmBtn.setAttribute('class', 'task__confirm__button');
+    newConfirmBtn.innerText = 'Confirm';
+    el.appendChild(newConfirmBtn);
+    if (!taskMask.classList.contains("hidden")) {
         taskMask.classList.add('hidden');
     }
     taskText.style.display = 'none';
     newTaskInput.focus();
-    onClickOutside(el, () => confirmAddingTask(newTaskInput, taskText))
-        .then(() => taskText.style.display = '')
-        .then(() => updateLocalStorage());
-}
+    Promise.race([
+        onClickOutside(el, () => confirmAddingTask(newTaskInput, taskText)),
+        onClickConfirmButton(newConfirmBtn, () => confirmAddingTask(newTaskInput, taskText)),
+        onPressEnterKey(newTaskInput, () => confirmAddingTask(newTaskInput, taskText))
+    ])
+        .then(() => {
+            taskText.style.display = '';
+            updateLocalStorage();
+            newConfirmBtn.remove();
+        });
+};
 
 //toggle task edit mode
 const toggleTask = (el) => {
     const taskMask = el.querySelector('.task__mask');
     const taskInput = el.querySelector('#taskInput');
-    if(!taskInput){
+    if (!taskInput) {
         if (taskMask.classList.contains("hidden")) {
             taskMask.classList.remove("hidden");
         } else {
@@ -123,13 +145,12 @@ const toggleTask = (el) => {
         }
     }
     const taskMasks = document.querySelectorAll('.task__mask');
-    taskMasks.forEach((targetTaskMask)=>{
-        if(targetTaskMask !== taskMask){
+    taskMasks.forEach((targetTaskMask) => {
+        if (targetTaskMask !== taskMask) {
             targetTaskMask.classList.add("hidden");
         }
     })
-
-}
+};
 
 //toggle task's check button
 const toggleCheckButton = (el) => {
@@ -139,7 +160,7 @@ const toggleCheckButton = (el) => {
         el.classList.add('checked');
     }
     updateLocalStorage();
-}
+};
 
 //event listener of clicking outside from the element
 const onClickOutside = (el, callback) => {
@@ -151,7 +172,30 @@ const onClickOutside = (el, callback) => {
             }
         }, { capture: true });
     })
-}
+};
+
+//event listener of clicking confirm button
+const onClickConfirmButton = (el, callback) => {
+    return new Promise((resolve) => {
+        el.addEventListener('click', (event) => {
+            event.stopPropagation();
+            callback();
+            resolve();
+        });
+    })
+};
+
+const onPressEnterKey = (el, callback) => {
+    return new Promise((resolve) => {
+        el.addEventListener('keypress', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                callback();
+                resolve();
+            }
+        });
+    })
+};
 
 //update local storage's data
 const updateLocalStorage = () => {
@@ -175,4 +219,4 @@ const updateLocalStorage = () => {
     }));
     const storedString = JSON.stringify(storedObj);
     localStorage.setItem("data", storedString);
-}
+};

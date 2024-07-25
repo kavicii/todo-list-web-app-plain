@@ -137,6 +137,22 @@ header {
     margin: 0 24px 0 16px;
 }
 
+.task__confirm__button{
+    height: 30px;
+    width: 80px;
+    position: absolute;
+    right: 24px;
+    background-color: var(--green-color);
+    border: 2px solid var(--line-color);
+    border-radius: 8px;
+    cursor: pointer;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--line-color);
+
+}
+
 #addTaskBtn{
     display: flex;
     align-items: center;
