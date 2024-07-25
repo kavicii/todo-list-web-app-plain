@@ -122,6 +122,13 @@ const toggleTask = (el) => {
             taskMask.classList.add("hidden");
         }
     }
+    const taskMasks = document.querySelectorAll('.task__mask');
+    taskMasks.forEach((targetTaskMask)=>{
+        if(targetTaskMask !== taskMask){
+            targetTaskMask.classList.add("hidden");
+        }
+    })
+
 }
 
 //toggle task's check button
