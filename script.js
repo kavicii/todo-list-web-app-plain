@@ -1,6 +1,22 @@
 const taskList = document.getElementById('tasksList');
+
 const addTaskBtn = document.getElementById('addTaskBtn');
-addTaskBtn.addEventListener('click', () => addTask());
+addTaskBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    addTask()
+});
+
+//event listener of clicking outside from the element
+document.addEventListener('click', function handleClickOutside(e) {
+    const confirmButton = document.querySelector('.task__confirm__button');
+    if (confirmButton !== null && !confirmButton.previousElementSibling.contains(e.target)) {
+        confirmButton.click();
+    };
+    const taskMask = document.querySelector('.show');
+    if (taskMask && !taskMask.contains(e.target)) {
+        taskMask.click();
+    }
+})
 
 if (localStorage.length !== 0) {
     let retString = localStorage.getItem("data");
@@ -14,16 +30,17 @@ if (localStorage.length !== 0) {
     addTask("For your security, we recommend not storing any sensitive personal information like passwords, credit card details, or social security numbers in this web app.", 'false');
 };
 
+
 //add task (function that handels default tasks, saved tasks or add a new task)
 function addTask(text, checked) {
     const newTaskItemContainer = document.createElement('li');
     newTaskItemContainer.setAttribute('class', 'task_item__container');
     taskList.appendChild(newTaskItemContainer);
-    
+
     const newTaskItem = document.createElement('li');
     newTaskItem.setAttribute('class', 'task__item');
     newTaskItemContainer.appendChild(newTaskItem);
-    
+
     const newTaskBtn = document.createElement('div');
     if (typeof checked !== "undefined" && checked === 'true') {
         newTaskBtn.setAttribute('class', 'task__button button checked');
@@ -31,72 +48,33 @@ function addTask(text, checked) {
         newTaskBtn.setAttribute('class', 'task__button button');
     }
     newTaskItem.appendChild(newTaskBtn);
-    
+
     const newTaskText = document.createElement('span');
     newTaskText.setAttribute('class', 'task__text');
     newTaskItem.appendChild(newTaskText);
-    
+
     const newTaskMask = document.createElement('div');
     newTaskMask.setAttribute('class', 'task__mask hidden');
     newTaskItem.appendChild(newTaskMask);
-    
+
     const newDelBtn = document.createElement('div');
     newDelBtn.setAttribute('class', 'task__delete__button button');
     newTaskMask.appendChild(newDelBtn);
-    
+
     const newModBtn = document.createElement('div');
     newModBtn.setAttribute('class', 'task__modify__button button');
     newTaskMask.appendChild(newModBtn);
 
     if (typeof text !== "undefined" && text.trim().length > 0) {
         newTaskText.innerText = text;
-        addEventListenerToButtons();
     } else {
-        // Create input field and hide the text from task item.
-        const newTaskInput = document.createElement('textarea');
-        newTaskInput.setAttribute('id', 'taskInput');
-        newTaskInput.setAttribute('rows', '1');
-        newTaskText.style.display = 'none';
-        newTaskItem.appendChild(newTaskInput);
-        newTaskInput.focus();
-
-        // Create confirm button.
-        const newConfirmBtn = document.createElement('div');
-        newConfirmBtn.setAttribute('class', 'task__confirm__button');
-        newConfirmBtn.innerText = 'Confirm';
-        newTaskItemContainer.appendChild(newConfirmBtn);
-
-        //Shrank task item's width to show the confirm button.
-        newTaskItem.className = 'task__item--shrank';
-
-        // Resize the textArea when it is created, user inputing and resizing the browser.
-        // The scrollHeight property can sometimes be inaccurate when called immediately after the textarea is created. Used Timeout to solve.
-        setTimeout( resizeTextArea, 10); 
-        newTaskInput.addEventListener('input', resizeTextArea);
-        window.addEventListener("resize", resizeTextArea);
-
-        hideTaskMasks();
-
-        Promise.race([
-            onClickOutside(newTaskItem, () => confirmAddingTask(newTaskInput, newTaskText)),
-            onClickConfirmButton(newConfirmBtn, () => confirmAddingTask(newTaskInput, newTaskText)),
-            onPressEnterKey(newTaskInput, () => confirmAddingTask(newTaskInput, newTaskText))
-        ])
-            .then(() => {
-                addEventListenerToButtons();
-                newTaskText.style.display = '';
-                newConfirmBtn.remove();
-                newTaskItem.className = 'task__item';
-                window.removeEventListener("resize", resizeTextArea);
-            });
+        editText(newTaskItem, newTaskText);
     }
+    newTaskItem.addEventListener('click', (event) => toggleTask(event));
+    newDelBtn.addEventListener('click', (event) => deleteTask(event));
+    newModBtn.addEventListener('click', (event) => modifyTask(event));
+    newTaskBtn.addEventListener('click', (event) => toggleCheckButton(event));
 
-    function addEventListenerToButtons(){
-        newTaskItem.addEventListener('click', () => toggleTask(newTaskItem));
-        newDelBtn.addEventListener('click', (event) => deleteTask(event));
-        newModBtn.addEventListener('click', (event) =>  modifyTask(event));
-        newTaskBtn.addEventListener('click', (event) => toggleCheckButton(event));
-    };
 };
 
 //confirm adding task
@@ -104,6 +82,7 @@ const confirmAddingTask = (input, text) => {
     if (input.value !== '' && input.value.trim().length > 0) {
         text.innerText = input.value;
         input.remove();
+        text.style.display = '';
     } else {
         input.closest('.task_item__container').remove();
     }
@@ -120,65 +99,30 @@ const deleteTask = (e) => {
 const modifyTask = (e) => {
     // Use stopPropagation() to prevent triggering click event from parent node. (Event Bubbling)
     e.stopPropagation();
-    
+
     // Get nodes.
     let taskItem = e.target.closest('.task__item');
     let taskText = taskItem.querySelector('.task__text');
-    let taskMask = taskItem.querySelector('.task__mask');
-    
-    // Create input field and hide the text from task item.
-    const newTaskInput = document.createElement('textarea');
-    newTaskInput.setAttribute('id', 'taskInput');
-    newTaskInput.setAttribute('rows', '1');
-    newTaskInput.value = taskText.innerText;
-    taskText.style.display = 'none';
-    taskItem.insertBefore(newTaskInput, taskMask);
-    newTaskInput.focus();
 
-    // Create confirm button.
-    const newConfirmBtn = document.createElement('div');
-    newConfirmBtn.setAttribute('class', 'task__confirm__button');
-    newConfirmBtn.innerText = 'Confirm';
-    taskItem.parentElement.appendChild(newConfirmBtn);
-
-    // Resize the textArea when it is created, user inputing and resizing the browser.
-    // The scrollHeight property can sometimes be inaccurate when called immediately after the textarea is created. Used Timeout to solve.
-    setTimeout(resizeTextArea, 10); 
-    newTaskInput.addEventListener('input', resizeTextArea);
-    window.addEventListener("resize", resizeTextArea);
-
-    if (!taskMask.classList.contains("hidden")) {
-        taskMask.classList.add('hidden');
-    }
-    
-    //Shrank task item's width to show the confirm button.
-    taskItem.className = 'task__item--shrank';
-
-    Promise.race([
-        onClickOutside(taskItem, () => confirmAddingTask(newTaskInput, taskText)),
-        onClickConfirmButton(newConfirmBtn, () => confirmAddingTask(newTaskInput, taskText)),
-        onPressEnterKey(newTaskInput, () => confirmAddingTask(newTaskInput, taskText))
-    ])
-        .then(() => {
-            taskText.style.display = '';
-            newConfirmBtn.remove();
-            taskItem.className = 'task__item';
-            window.removeEventListener("resize", resizeTextArea);
-        });
+    // Create temp text field for input, change task text after confirmation.
+    editText(taskItem, taskText);
 };
 
 //toggle task edit mode
-const toggleTask = (el) => {
-    const taskMask = el.querySelector('.task__mask');
-    const taskInput = el.querySelector('#taskInput');
+const toggleTask = (e) => {
+    e.stopPropagation();
+    const taskMask = e.currentTarget.querySelector('.task__mask');
+    const taskInput = e.currentTarget.querySelector('#taskInput');
     if (!taskInput) {
         if (taskMask.classList.contains("hidden")) {
             taskMask.classList.remove("hidden");
+            taskMask.classList.add("show");
+            hideTaskMasks(taskMask);
         } else {
             taskMask.classList.add("hidden");
+            taskMask.classList.remove("show");
         }
     }
-    hideTaskMasks(taskMask);
 };
 
 //toggle task's check button
@@ -191,30 +135,6 @@ const toggleCheckButton = (e) => {
         e.target.classList.add('checked');
     }
     updateLocalStorage();
-};
-
-//event listener of clicking outside from the element
-const onClickOutside = (el, callback) => {
-    return new Promise((resolve) => {
-        document.addEventListener('click', event => {
-            if (!el.contains(event.target)) {
-                callback();
-                resolve();
-            }
-        }, { capture: true });
-    })
-};
-
-//event listener of clicking confirm button
-const onClickConfirmButton = (el, callback) => {
-    return new Promise((resolve) => {
-        el.addEventListener('click', (event) => {
-            // Use stopPropagation() to prevent triggering click event from parent node. (Event Bubbling)
-            event.stopPropagation();
-            callback();
-            resolve();
-        });
-    })
 };
 
 const onPressEnterKey = (el, callback) => {
@@ -262,12 +182,57 @@ const resizeTextArea = () => {
 const hideTaskMasks = (targetMask) => {
     const taskMasks = document.querySelectorAll('.task__mask');
     taskMasks.forEach((otherTaskMask) => {
-        if (typeof targetMask !== 'undefined'){
+        if (typeof targetMask !== 'undefined') {
             if (otherTaskMask !== targetMask) {
                 otherTaskMask.classList.add("hidden");
+                otherTaskMask.classList.remove("show");
             }
-        }else{
+        } else {
             otherTaskMask.classList.add("hidden");
+            otherTaskMask.classList.remove("show");
+
         }
     })
 };
+
+const editText = (taskItem, taskText) => {
+    // Clear all confirm button.
+    const confirmButton = document.querySelector('.task__confirm__button');
+    if (confirmButton !== null) {
+        confirmButton.click();
+    }
+
+    // Create input field and hide the text from task item.
+    const newTaskInput = document.createElement('textarea');
+    newTaskInput.setAttribute('id', 'taskInput');
+    newTaskInput.setAttribute('rows', '1');
+    newTaskInput.value = taskText.innerText;
+    taskText.style.display = 'none';
+    taskItem.appendChild(newTaskInput);
+    newTaskInput.focus();
+
+    // Create confirm button.
+    const newConfirmBtn = document.createElement('div');
+    newConfirmBtn.setAttribute('class', 'task__confirm__button');
+    newConfirmBtn.innerText = 'Confirm';
+    taskItem.parentElement.appendChild(newConfirmBtn);
+
+    //Shrank task item's width to show the confirm button.
+    taskItem.className = 'task__item--shrank';
+
+    // Resize the textArea when it is created, user inputing and resizing the browser.
+    // The scrollHeight property can sometimes be inaccurate when called immediately after the textarea is created. Used Timeout to solve.
+    setTimeout(resizeTextArea, 10);
+    newTaskInput.addEventListener('input', resizeTextArea);
+    window.addEventListener("resize", resizeTextArea);
+
+    hideTaskMasks();
+
+    newConfirmBtn.addEventListener('click', function handleClickConfirmBtn(e) {
+        e.stopPropagation();
+        confirmAddingTask(newTaskInput, taskText);
+        newConfirmBtn.remove();
+        taskItem.className = 'task__item';
+        window.removeEventListener("resize", resizeTextArea);
+    })
+}
