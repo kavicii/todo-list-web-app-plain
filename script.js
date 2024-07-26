@@ -3,7 +3,22 @@ const taskList = document.getElementById('tasksList');
 const addTaskBtn = document.getElementById('addTaskBtn');
 addTaskBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    addTask()
+    addTask();
+});
+
+document.addEventListener('keydown', function handleKeyPress(e) {
+    const confirmButton = document.querySelector('.task__confirm__button');
+    if (confirmButton) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            confirmButton.click();
+        }
+    }else{
+        if (e.key === 'Enter'){
+            e.preventDefault();
+            addTaskBtn.click();
+        }
+    }
 });
 
 //event listener of clicking outside from the element
@@ -24,9 +39,10 @@ if (localStorage.length !== 0) {
         addTask(task.text, task.checked);
     });
 } else {
-    addTask("Welcome to my to-do list.", 'true');
+    addTask("Welcome to my to-do list! 👋", 'true');
     addTask("Click task item to toggle edit mode for deleting or modifying task.");
-    addTask("Click below \"+\" button for adding new task.", 'true');
+    addTask("Click \"+\" button below or press \"Enter\"  to add new task.", 'true');
+    addTask("You can press \"Shift\" and \"Enter\" key at the same time for line breaks!", 'false');
     addTask("For your security, we recommend not storing any sensitive personal information like passwords, credit card details, or social security numbers in this web app.", 'false');
 };
 
