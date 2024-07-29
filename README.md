@@ -16,3 +16,12 @@ Open the index.html file in your browser.
 **HTML**: For the structure of the web page.  
 **CSS**: For styling the elements.  
 **JavaScript**: For handling user interactions, data manipulation, and localStorage storage.
+
+## UX Enhancements Update
+
+This update brings a significant improvement to the user experience, making your todo-list app even more accessible and efficient:
+
+**Keyboard Navigation:**
+
+* **Enter Key for Confirmation:**  Now you can add new tasks without ever touching your mouse! Simply type your task in the input field and press the **Enter** key to confirm and add it to your list.
+* **Line Breaks with Shift + Enter:**  Need to add a multi-line task?  Press **Shift + Enter** to create a line break within the task input, allowing you to format your tasks with multiple lines.
